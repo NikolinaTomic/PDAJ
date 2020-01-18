@@ -17,15 +17,6 @@ import pdaj as ebi
 from ..app import app
 from .worker import gen_simulation_model_params, solve
 
-DEFAULT_RESOLUTION = 60
-DEFAULT_TMAX = 30
-DEFAULT_DT = 0.01
-
-DEFAULT_L1 = 1
-DEFAULT_L2 = 1
-DEFAULT_M1 = 1
-DEFAULT_M2 = 1
-
 @app.task
 def write_csv(results):
     with open("/results/dist60.csv", 'w') as csvfile:
@@ -46,8 +37,9 @@ def seed_computations(ignore_result=True):
 
     #record_experiment_status.si('started').delay()
     chord(
-        (solve.s(DEFAULT_L1, DEFAULT_L2, DEFAULT_M1, DEFAULT_M2, DEFAULT_TMAX, DEFAULT_DT, theta1_init, theta2_init)
-        for theta1_init, theta2_init in gen_simulation_model_params(DEFAULT_RESOLUTION)),write_csv.s()).delay()
+        (solve.s(app.conf.DEFAULT_L1, app.conf.DEFAULT_L2, app.conf.DEFAULT_M1, app.conf.DEFAULT_M2, app.conf.DEFAULT_TMAX,
+                 app.conf.DEFAULT_DT, theta1_init, theta2_init)
+        for theta1_init, theta2_init in gen_simulation_model_params(app.conf.DEFAULT_RESOLUTION)),write_csv.s()).delay()
 
    # record_experiment_status.si('completed').delay()
 
