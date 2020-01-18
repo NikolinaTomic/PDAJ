@@ -32,16 +32,16 @@ def write_csv(results):
 #docker exec -it pdaj_server_1 cat /var/log/supervisor/celery.log
 @app.task
 def seed_computations(ignore_result=True):
-    #if os.path.exists(get_experiment_status_filename('started')):
-    #    raise Reject('Computations have already been seeded!')
+    if os.path.exists(get_experiment_status_filename('started')):
+        raise Reject('Computations have already been seeded!')
 
-    #record_experiment_status.si('started').delay()
+    record_experiment_status.si('started').delay()
     chord(
         (solve.s(app.conf.DEFAULT_L1, app.conf.DEFAULT_L2, app.conf.DEFAULT_M1, app.conf.DEFAULT_M2, app.conf.DEFAULT_TMAX,
                  app.conf.DEFAULT_DT, theta1_init, theta2_init)
         for theta1_init, theta2_init in gen_simulation_model_params(app.conf.DEFAULT_RESOLUTION)),write_csv.s()).delay()
 
-   # record_experiment_status.si('completed').delay()
+    record_experiment_status.si('completed').delay()
 
 ## Recording the experiment status
 

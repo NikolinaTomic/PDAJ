@@ -42,7 +42,6 @@ def solve(L1, L2, m1, m2, tmax, dt, theta1_init, theta2_init):
 
     return theta1_init, theta2_init, theta1, theta2, x1, y1, x2, y2
 
-@app.task
 def gen_simulation_model_params(theta_resolution):
     search_space = np.linspace(0, 2 * np.pi, theta_resolution)
     for theta1_init in search_space:
